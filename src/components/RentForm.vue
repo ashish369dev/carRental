@@ -5,16 +5,26 @@
       <p class="subtitle">Drive when you want !!</p>
       <div class="column is-half is-offset-3">
         <form action class="form" @submit.prevent="submitForm">
-          <b-field label="Name"  :type="{'is-danger': errors.has('name')}"
-                :message="errors.first('name')">
+          <b-field
+            label="Name"
+            :type="{'is-danger': errors.first('name')}"
+            :message="errors.first('name')?'Enter full name':''"
+          >
             <b-input v-model="name" v-validate="'required'" name="name" placeholder="Enter Name"></b-input>
           </b-field>
-          <b-field label="Email">
-            <b-input type="email" placeholder="Enter email"></b-input>
+          <b-field
+            label="Email"
+            :type="{'is-danger':errors.first('email')}"
+            :message="errors.first('email')?'Enter email address ':''"
+          >
+            <b-input type="email" placeholder="Enter email" v-validate="'required'" name="email"></b-input>
           </b-field>
           <b-field grouped>
             <b-field label="Contact" expanded>
-              <b-field>
+              <b-field
+                :type="{'is-danger':errors.first('contact')}"
+                :message="errors.first('contact')?'Enter contact number ':''"
+              >
                 <b-select v-model="ext" placeholder="Ext.">
                   <option v-for="data in contacts" :key="data.id" :value="data.value">{{data.value}}</option>
                 </b-select>
@@ -22,9 +32,10 @@
                   type="text"
                   pattern="[0-9]*"
                   v-model="contact"
-                  validation-message=" Enter Numbers Only"
                   placeholder="Enter Contact"
                   expanded
+                  v-validate="'required'"
+                  name="contact"
                 ></b-input>
               </b-field>
             </b-field>
@@ -32,21 +43,41 @@
           <b-field label="Rent For" expanded></b-field>
           <b-field>
             <b-radio-button v-model="rentday" native-value="one" icon="magnify">
-               <b-icon icon="calendar-today"></b-icon>
-              <span >One Day</span>
+              <b-icon icon="calendar-today"></b-icon>
+              <span>One Day</span>
             </b-radio-button>
-            <b-radio-button v-model="rentday" native-value="multiple" >
+            <b-radio-button v-model="rentday" native-value="multiple">
               <b-icon icon="calendar-range"></b-icon>
               <span>Multiple Day</span>
             </b-radio-button>
           </b-field>
-          <b-field label="Car Type">
-            <b-select placeholder="Select car group" expanded v-model="carType">
+          <b-field
+            label="Car Type"
+            :type="{'is-danger':errors.first('carType')}"
+            :message="errors.first('carType')?'Select car type ':''"
+          >
+            <b-select
+              placeholder="Select car type"
+              expanded
+              v-model="carType"
+              name="carType"
+              v-validate="'required'"
+            >
               <option v-for="data in carTypes" :key="data.id" :value="data.value">{{data.value}}</option>
             </b-select>
           </b-field>
-          <b-field label="Car">
-            <b-select placeholder="Select car " expanded v-model="car">
+          <b-field
+            label="Car"
+            :type="{'is-danger':errors.first('car')}"
+            :message="errors.first('car')?'Select car  ':''"
+          >
+            <b-select
+              placeholder="Select car "
+              expanded
+              v-model="car"
+              name="car"
+              v-validate="'required'"
+            >
               <template v-if="carType">
                 <template v-for="item in cars">
                   <option
@@ -65,11 +96,32 @@
             <b-field class="column is-6" v-if="rent">Per day rent : &#36;{{rent}}</b-field>
             <b-field class="column is-6 label" v-if="total">Total : &#36;{{total}}</b-field>
           </div>
-          <b-field label="Select Date" v-if="rentday=='multiple'">
-            <b-datepicker placeholder="Select Date" v-model="dates" range></b-datepicker>
+          <b-field
+            label="Select Date"
+            v-if="rentday=='multiple'"
+            :type="{'is-danger':errors.first('dates')}"
+            :message="errors.first('dates')?'Select date range  ':''"
+          >
+            <b-datepicker
+              placeholder="Select Date"
+              v-model="dates"
+              range
+              v-validate="'required'"
+              name="dates"
+            ></b-datepicker>
           </b-field>
-          <b-field label="Select Date" v-else-if="rentday=='one'">
-            <b-datepicker placeholder="Select Date" v-model="date"></b-datepicker>
+          <b-field
+            label="Select Date"
+            v-else-if="rentday=='one'"
+            :type="{'is-danger':errors.first('date')}"
+            :message="errors.first('date')?'Select date  ':''"
+          >
+            <b-datepicker
+              placeholder="Select Date"
+              v-model="date"
+              v-validate="'required'"
+              name="date"
+            ></b-datepicker>
           </b-field>
           <b-button native-type="submit" class="is-primary">submit</b-button>
         </form>
@@ -150,7 +202,23 @@ export default {
       let car = this.cars.find(item => item.value === this.car);
       this.total = days * car.perday;
     },
-    submitForm() {}
+    submitForm() {
+      this.$validator.validateAll().then(result => {
+        if (result) {
+          this.$buefy.toast.open({
+            message: "Form is valid!",
+            type: "is-success",
+            position: "is-bottom"
+          });
+          return;
+        }
+        this.$buefy.toast.open({
+          message: " Please check the fields ! Fill all required fields.",
+          type: "is-danger",
+          position: "is-top-right"
+        });
+      });
+    }
   }
 };
 </script>
