@@ -5,8 +5,9 @@
       <p class="subtitle">Drive when you want !!</p>
       <div class="column is-half is-offset-3">
         <form action class="form" @submit.prevent="submitForm">
-          <b-field label="Name">
-            <b-input v-model="name" placeholder="Enter Name"></b-input>
+          <b-field label="Name"  :type="{'is-danger': errors.has('name')}"
+                :message="errors.first('name')">
+            <b-input v-model="name" v-validate="'required'" name="name" placeholder="Enter Name"></b-input>
           </b-field>
           <b-field label="Email">
             <b-input type="email" placeholder="Enter email"></b-input>
