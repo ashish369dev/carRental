@@ -31,10 +31,12 @@
           </b-field>
           <b-field label="Rent For" expanded></b-field>
           <b-field>
-            <b-radio-button v-model="rentday" native-value="one">
-              <span>One Day</span>
+            <b-radio-button v-model="rentday" native-value="one" icon="magnify">
+               <b-icon icon="calendar-today"></b-icon>
+              <span >One Day</span>
             </b-radio-button>
-            <b-radio-button v-model="rentday" native-value="multiple">
+            <b-radio-button v-model="rentday" native-value="multiple" >
+              <b-icon icon="calendar-range"></b-icon>
               <span>Multiple Day</span>
             </b-radio-button>
           </b-field>
